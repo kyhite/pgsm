@@ -64,7 +64,7 @@ class SequentiallyAllocatedMergeSplitSampler(object):
 
         log_ratio = forward_factor - reverse_factor
 
-#         print split_mh_factor, merge_mh_factor, log_ratio
+#         print( split_mh_factor, merge_mh_factor, log_ratio)
 
         u = np.random.random()
 

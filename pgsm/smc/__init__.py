@@ -3,5 +3,6 @@ Created on 8 Dec 2016
 
 @author: Andrew Roth
 '''
-import kernels
-import samplers
+
+from pgsm.smc import kernels
+from pgsm.smc import samplers

@@ -32,7 +32,7 @@ class SplitMergeSetupKernel(object):
     def setup_split_merge(self, clustering, num_anchors):
         self.iter += 1
 
-        clustering = np.array(clustering, dtype=np.int)
+        clustering = np.array(clustering, dtype=np.int64)
 
         if self._can_update(clustering):
             self.update(clustering)

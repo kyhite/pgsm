@@ -89,7 +89,7 @@ class Test(unittest.TestCase):
 
                 partition_prior.alpha = np.random.RandomState(seed).gamma(0.5, scale=2)
 
-                print n, seed, partition_prior.alpha
+                print( n, seed, partition_prior.alpha)
 
                 sampler = sampler_factory(data, dist, partition_prior)
 
@@ -120,9 +120,9 @@ class Test(unittest.TestCase):
         return posterior_probs
 
     def _test_posterior(self, pred_probs, true_probs):
-        print sorted(pred_probs.items())
-        print
-        print sorted(true_probs.items())
+        print( sorted(pred_probs.items()))
+        print()
+        print( sorted(true_probs.items()))
         for key in true_probs:
             self.assertAlmostEqual(pred_probs[key], true_probs[key], delta=0.02)
 

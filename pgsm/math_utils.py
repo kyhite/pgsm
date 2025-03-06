@@ -8,15 +8,21 @@ from __future__ import division
 import math
 import numba
 import numpy as np
+from pgsm import SETTINGS
+
+numba.config.DISABLE_JIT = SETTINGS.DISABLE_JIT
 
 
 def discrete_rvs(p):
-    return np.random.multinomial(1, p).argmax()
+
+    return np.random.multinomial(1, np.array(list(p))).argmax()
 
 
 @numba.jit(cache=True, nopython=True)
 def exp_normalize(log_p):
-    log_norm = log_sum_exp(log_p)
+
+    l = list(log_p)
+    log_norm = log_sum_exp(l)
 
     p = np.exp(log_p - log_norm)
 

@@ -1,6 +1,8 @@
 '''
 Simple example of 4 2D multivariate normals.
 '''
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from sklearn.metrics import homogeneity_completeness_v_measure
 
@@ -8,6 +10,7 @@ import matplotlib.pyplot as pp
 import numpy as np
 import pandas as pd
 import seaborn as sb
+import numba
 
 from pgsm.distributions.mvn import MultivariateNormalDistribution
 from pgsm.mcmc.collapsed_gibbs import CollapsedGibbsSampler
@@ -15,7 +18,7 @@ from pgsm.mcmc.concentration import GammaPriorConcentrationSampler
 from pgsm.mcmc.particle_gibbs_split_merge import ParticleGibbsSplitMergeSampler
 from pgsm.partition_priors import DirichletProcessPartitionPrior
 from pgsm.mcmc.split_merge_setup import UniformSplitMergeSetupKernel
-
+numba.config.DISABLE_JIT = True
 
 def plot_clustering(clustering, data, title):
     plot_df = pd.DataFrame(data, columns=['0', '1'])
@@ -26,10 +29,10 @@ def plot_clustering(clustering, data, title):
 
 
 def print_info(pred_clustering, true_clustering, iteration):
-    print 'Iteration: {0}'.format(i)
-    print 'Number of cluster: {}'.format(len(np.unique(pred_clustering)))
-    print 'Homogeneity: {0}, Completeness: {1}, V-measure: {2}'.format(
-        *homogeneity_completeness_v_measure(pred_clustering, true_clustering)
+    print( 'Iteration: {0}'.format(i))
+    print( 'Number of cluster: {}'.format(len(np.unique(pred_clustering))))
+    print( 'Homogeneity: {0}, Completeness: {1}, V-measure: {2}'.format(
+        *homogeneity_completeness_v_measure(pred_clustering, true_clustering))
     )
 
 

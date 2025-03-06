@@ -5,7 +5,7 @@ Created on 8 Dec 2016
 '''
 from __future__ import division
 
-from scipy.misc import logsumexp as log_sum_exp
+from scipy.special import logsumexp as log_sum_exp
 
 import numpy as np
 
@@ -83,11 +83,11 @@ def relabel_clustering(clustering):
     for c in clustering:
         relabeled.append(blocks.index(c))
 
-    return np.array(relabeled, dtype=np.int)
+    return np.array(relabeled, dtype=np.int64)
 
 
 def setup_split_merge(anchor_proposal, clustering, num_anchors):
-    clustering = np.array(clustering, dtype=np.int)
+    clustering = np.array(clustering, dtype=np.int64)
 
     num_data_points = len(clustering)
 

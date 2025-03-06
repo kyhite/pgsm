@@ -81,7 +81,7 @@ class ParticleGibbsSplitMergeSampler(object):
         return relabel_clustering(clustering)
 
     def _sample_particle(self, particles_weights):
-        particles = particles_weights.keys()
+        particles = list(particles_weights.keys())
 
         weights = particles_weights.values()
 
