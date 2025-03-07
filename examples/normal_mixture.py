@@ -49,10 +49,10 @@ def simulate_data(nun_data_points_per_cluster=100):
     return X, Z
 
 np.random.seed(0)
-data, true_clustering = simulate_data(100)
 
 dist = MultivariateNormalDistribution(2)
 partition_prior = DirichletProcessPartitionPrior(1)
+
 
 gibbs_sampler = CollapsedGibbsSampler(dist, partition_prior)
 
@@ -66,12 +66,17 @@ num_data_points = data.shape[0]
 pred_clustering = np.zeros(num_data_points)
 for i in range(100):
     if i % 10 == 0:
-        print_info(pred_clustering, true_clustering, i)
+        print("pred_clustering", pred_clustering)
+        # print_info(pred_clustering, i)
     pred_clustering = pgsm_sampler.sample(pred_clustering, data)
+    # print("pred1", pred_clustering)
     pred_clustering = gibbs_sampler.sample(pred_clustering, data)
+    # print("pred2", pred_clustering)
     num_clusters = len(np.unique(pred_clustering))
     partition_prior.alpha = conc_sampler.sample(partition_prior.alpha, num_clusters, num_data_points)
-
+    print(partition_prior.alpha)
+print(pred_clustering.shape)
+print(data.shape)
 plot_clustering(pred_clustering, data, 'Predicted clustering')
-plot_clustering(true_clustering, data, 'True clustering')
+# plot_clustering(true_clustering, data, 'True clustering')
 pp.show()
