@@ -29,7 +29,17 @@ class SplitMergeSetupKernel(object):
 
         self.num_data_points = len(data)
 
+
+    def __dict__(self):
+        return {"data": self.data, "dist": self.dist.__dict__(), 
+                "partition_prior": self.partition_prior.__dict__(), 
+                "num_adaptation_iters": self.num_adaptation_iters, 
+                "iter": self.iter,
+                "num_data_points": self.num_data_points
+                }
+
     def setup_split_merge(self, clustering, num_anchors):
+        # from termcolor import colored
         self.iter += 1
 
         clustering = np.array(clustering, dtype=np.int64)
@@ -38,10 +48,13 @@ class SplitMergeSetupKernel(object):
             self.update(clustering)
 
         num_data_points = len(clustering)
+        # print(colored(f"num_data_points = {num_data_points}", "magenta"))
 
         num_anchors = min(num_anchors, num_data_points)
-
+        # print(colored(f"num_anchors = {num_anchors}", "magenta"))
+        
         anchors = self._propose_anchors(num_anchors)
+        # print(colored(f"anchors = {anchors}", "magenta"))
 
         anchor_clusters = set([clustering[a] for a in anchors])
 
@@ -74,6 +87,14 @@ class UniformSplitMergeSetupKernel(SplitMergeSetupKernel):
     Setup a split merge move by selecting anchors uniformly.
     '''
 
+
+    def __dict__(self):
+        return {"data": self.data, "dist": self.dist.__dict__(), 
+                "partition_prior": self.partition_prior.__dict__(), 
+                "num_adaptation_iters": self.num_adaptation_iters, 
+                "iter": self.iter,
+                "num_data_points": self.num_data_points
+                }
     def _can_update(self, clustering):
         return False
 
@@ -90,6 +111,8 @@ class ThresholdInformedSplitMergeSetupKernel(SplitMergeSetupKernel):
 
         self.threshold = threshold
 
+    def __dict__(self):
+        return super.__dict()
     def update(self, clustering):
         self.cluster_params = {}
 
@@ -186,7 +209,8 @@ class CRPInformedSplitMergeSetupKernel(SplitMergeSetupKernel):
         SplitMergeSetupKernel.__init__(self, data, dist, partition_prior, num_adaptation_iters=num_adaptation_iters)
 
         self.max_clusters_seen = 0
-
+    def __dict__(self):
+        return super.__dict()
     def update(self, clustering):
         self.cluster_params = {}
 
@@ -220,21 +244,34 @@ class CRPInformedSplitMergeSetupKernel(SplitMergeSetupKernel):
         return can_update
 
     def _propose_anchors(self, num_anchors):
+        # from termcolor import colored
+        
+        
         if num_anchors != 2:
             raise Exception('CRPInformedSplitMergeSetupKernel only works for 2 anchors')
-
+        # print(colored(f"num_anchors == {num_anchors}", "yellow"))
         anchor_1 = np.random.randint(0, self.num_data_points)
+        # print(colored(f"num_anchors == {anchor_1}", "yellow"))
 
         if anchor_1 not in self.data_to_clusters:
             self._set_data_to_clusters(anchor_1)
+            
+        # print(colored(f"data_to_clusters == {self.data_to_clusters}", "yellow"))
 
-        cluster = np.random.choice(self.data_to_clusters[anchor_1].keys(), p=self.data_to_clusters[anchor_1].values())
-
+        cluster = np.random.choice(list(self.data_to_clusters[anchor_1].keys()), p=list(self.data_to_clusters[anchor_1].values()))
+        
         cluster_members = set(self.clusters_to_data[cluster])
-
+        # print(colored(f"cluster_members == {cluster_members}", "yellow"))
         cluster_members.discard(anchor_1)
+        # print(cluster_members)
+        if len(cluster_members) == 0:
+            anchor_1, anchor_2 = np.random.choice(np.arange(self.num_data_points), replace=False, size=2)
 
-        anchor_2 = np.random.choice(list(cluster_members))
+        else:
+            
+            anchor_2 = np.random.choice(np.array(list(cluster_members)))
+
+        # anchor_2 = np.random.choice(np.array(list(cluster_members)))
 
         return int(anchor_1), int(anchor_2)
 
@@ -278,6 +315,8 @@ class ClusterInformedSplitMergeSetupKernel(SplitMergeSetupKernel):
         self.use_prior_weight = use_prior_weight
 
         self.max_clusters_seen = 0
+    def __dict__(self):
+        return super.__dict()
 
     def update(self, clustering):
         clustering = relabel_clustering(clustering)
@@ -366,7 +405,8 @@ class ClusterInformedSplitMergeSetupKernel(SplitMergeSetupKernel):
             anchor_1, anchor_2 = np.random.choice(np.arange(self.num_data_points), replace=False, size=2)
 
         else:
-            anchor_2 = np.random.choice(list(cluster_members))
+            
+            anchor_2 = np.random.choice(np.array(list(cluster_members)))
 
         return anchor_1, anchor_2
 
@@ -381,7 +421,8 @@ class PointInformedSplitMergeSetupKernel(SplitMergeSetupKernel):
         params = self.dist.create_params()
 
         self.log_seperate_margs = self.dist.log_predictive_likelihood_bulk(self.data, params)
-
+    def __dict__(self):
+        return super.__dict()
     def update(self, clustering):
         pass
 

@@ -13,7 +13,9 @@ from pgsm.math_utils import log_factorial, log_gamma
 class PartitionPrior(object):
 
     def log_likelihood(self, block_sizes):
-        return self.log_tau_1(len(block_sizes)) + sum([self.log_tau_2(x) for x in block_sizes])
+        logged = self.log_tau_1(len(block_sizes)) + sum([self.log_tau_2(x) for x in block_sizes])
+        # print("LOG RESULT == ", logged)
+        return logged
 
     def log_tau_1(self, x):
         raise NotImplementedError()
@@ -33,6 +35,8 @@ class DirichletProcessPartitionPrior(PartitionPrior):
     def __init__(self, alpha):
         self.alpha = alpha
 
+    def __dict__(self):
+        return {"alpha": self.alpha, "type": "DirichletProcessPartitionPrior"}
     def log_tau_1(self, x):
         return x * math.log(self.alpha)
 

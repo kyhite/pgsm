@@ -102,4 +102,5 @@ def log_binomial_coefficient(n, x):
 
 @numba.vectorize(["float64(float64)", "int64(float64)"])
 def log_gamma(x):
+    # print("X == ", x)
     return math.lgamma(x)

@@ -26,6 +26,11 @@ class MultivariateNormalPriors(object):
 
         self.log_det_S = cholesky_log_det(self.S_chol)
 
+    def __dict__(self):
+        return {"dim": self.dim, "mu": self.nu, "r": self.r,
+                 "u": self.u , "S_chol": self.S_chol, "log_det_S": self.log_det_S}
+    
+
     @property
     def S(self):
         return np.dot(self.S_chol, np.conj(self.S_chol.T))
@@ -44,6 +49,9 @@ class MultivariateNormalParameters(object):
         self.S_chol = S_chol
 
         self.N = N
+
+    # def __dict__(self):
+
 
     @property
     def S(self):
@@ -94,9 +102,11 @@ class MultivariateNormalDistribution(object):
     def __init__(self, dim, priors=None):
         if priors is None:
             priors = MultivariateNormalPriors(dim)
+            
 
         self.priors = priors
-
+    def __dict__(self):
+        return {"priors": self.priors.__dict__(), "type":"MultivariateNormalPriors" }
     def create_params(self):
         return MultivariateNormalParameters(
             self.priors.nu,
@@ -174,8 +184,9 @@ def _log_predictive_likelihood(data_point, nu, r, u, S_chol):
     D = len(data_point)
 
     nu_new, r_new, _, S_chol_new = _increment_params(data_point, nu, r, u, S_chol, inplace=False)
-
-    return _log_niw_marginal(D, 1, nu_new, r_new, S_chol_new, nu, r, S_chol)
+    result = _log_niw_marginal(D, 1, nu_new, r_new, S_chol_new, nu, r, S_chol)
+    # print("result?", result)
+    return result
 
 
 @numba.jit(cache=True, nopython=True)

@@ -38,6 +38,12 @@ class CollapsedGibbsSampler(object):
 
         self.partition_prior = partition_prior
 
+    # def __repr__():
+
+    def __dict__(self):
+        return {"dist": self.dist.__dict__(), "partition_prior": self.partition_prior.__dict__(), "type": "CollapsedGibbsSampler"}
+        
+
     def sample(self, clustering, data, num_iters=1):
         tables = self._get_tables(clustering, data)
 

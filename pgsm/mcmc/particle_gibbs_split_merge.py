@@ -47,6 +47,14 @@ class ParticleGibbsSplitMergeSampler(object):
 
         self.split_merge_setup_kernel = split_merge_setup_kernel
 
+    
+    def __dict__(self):
+        return {"smc_kernel": self.smc_kernel.__dict__()
+                , "smc_sampler": self.smc_sampler.__dict__
+                # , ""
+                }
+
+        
     @property
     def dist(self):
         return self.smc_kernel.dist
@@ -55,19 +63,24 @@ class ParticleGibbsSplitMergeSampler(object):
     def partition_prior(self):
         return self.smc_kernel.partition_prior
 
+
     def sample(self, clustering, data, num_iters=1):
         for _ in range(num_iters):
             anchors, sigma = self._setup_split_merge(clustering)
-
+            print("anchors = ", anchors, " sigma == ", sigma)
             self.smc_kernel.setup(anchors, clustering, data, sigma)
 
             particles_weights = self.smc_sampler.sample(data[sigma], self.smc_kernel)
-
+            
             sampled_particle = self._sample_particle(particles_weights)
+            
 
             self._get_updated_clustering(clustering, sampled_particle, sigma)
+            print("particles_weights", clustering)
 
             clustering = relabel_clustering(clustering)
+            print("particles_weights", clustering)
+            
 
         return clustering
 
@@ -81,7 +94,10 @@ class ParticleGibbsSplitMergeSampler(object):
         return relabel_clustering(clustering)
 
     def _sample_particle(self, particles_weights):
+        # print(particles_weights)
         particles = list(particles_weights.keys())
+        # print(particles)
+
 
         weights = particles_weights.values()
 

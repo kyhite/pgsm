@@ -33,6 +33,10 @@ class AbstractSplitMergKernel(object):
 
         self.partition_prior = partition_prior
 
+    def __dict__(self):
+        return {"dist": self.dist.__dict__(), "partition_prior": self.partition_prior.__dict__()}
+    
+
     def can_add_block(self, parent_particle):
         '''
         Check if a descendant particle can add a new block.
